@@ -2,6 +2,8 @@
 Transferable Double Exponential non-bonded potential for condensed phase simulations of small molecules.
 
 
+[![CI](https://github.com/jthorton/de-forcefields/actions/workflows/CI.yaml/badge.svg)](https://github.com/jthorton/de-forcefields/actions/workflows/CI.yaml)
+
 This repository contains general transferable force fields that use the Double Exponential functional form first proposed by [Brooks](http://aip.scitation.org/doi/10.1063/1.5107505). 
 These force fields use the SMIRKS Native Open Force Field (SMIRNOFF) format. 
 By convention these files use the `.offxml` file extension. 

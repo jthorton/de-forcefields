@@ -15,12 +15,12 @@ from openmm import unit
         pytest.param("de-force_unconstrained-1.0.0.offxml", id="Constraints"),
     ],
 )
-def test_load_de_ff():
+def test_load_de_ff(forcefield):
     """
     Load the DE FF and create an OpenMM system.
     """
 
-    ff = ForceField("de-force-1.0.0.offxml", load_plugins=True)
+    ff = ForceField(forcefield, load_plugins=True)
     ethanol = Molecule.from_smiles("CCO")
 
     system = ff.create_openmm_system(topology=ethanol.to_topology())

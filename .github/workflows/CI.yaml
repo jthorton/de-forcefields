@@ -55,4 +55,4 @@ jobs:
 
       - name: PyTest
         run: |
-          pytest -v --cov=deforcefields --cov-config=setup.cfg deforcefields/tests/ --cov-report=xml
+          pytest -v  deforcefields/tests/
