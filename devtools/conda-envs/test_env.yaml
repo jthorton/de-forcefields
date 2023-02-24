@@ -12,4 +12,6 @@ dependencies:
 
     # Core-deps
   - openff-toolkit >=0.10.6, <0.11
-  - smirnoff-plugins
+#  - smirnoff-plugins
+  - pip:
+    - git+https://github.com/jthorton/de-forcefields
