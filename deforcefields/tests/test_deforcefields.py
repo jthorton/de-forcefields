@@ -82,6 +82,6 @@ def test_energy_sites():
 
     ff = ForceField("de-force-1.0.0.offxml", load_plugins=True)
     energies = evaluate_water_energy_at_distances(force_field=ff, distances=[2, 3, 4])
-    ref_values = [728.5424499511719, 35.060861110687256, 9.134421169757843]
+    ref_values = [1005.0846252441406, 44.696786403656006, 10.453390896320343]
     for i, energy in enumerate(energies):
         assert energy == pytest.approx(ref_values[i])
