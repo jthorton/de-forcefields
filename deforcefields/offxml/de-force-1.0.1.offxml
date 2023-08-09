@@ -3,6 +3,7 @@
     <Author>Cole Group</Author>
     <Date>2023-02-17</Date>
     <Constraints version="0.3">
+        <Constraint smirks="[#1:1]-[*:2]" id="c1"></Constraint>
         <Constraint smirks="[#1:1]-[#8X2H2+0:2]-[#1]" id="c-tip4p-H-O" distance="0.9572 * angstrom"></Constraint>
         <Constraint smirks="[#1:1]-[#8X2H2+0]-[#1:2]" id="c-tip4p-H-O-H" distance="1.5139006545247014 * angstrom"></Constraint>
     </Constraints>
@@ -324,7 +325,7 @@
     <vdW version="0.3" potential="Lennard-Jones-12-6" combining_rules="Lorentz-Berthelot" scale12="0.0" scale13="0.0" scale14="0.5" scale15="1.0" cutoff="9.0 * angstrom" switch_width="1.0 * angstrom" method="cutoff">
         <Atom smirks="[*:1]" epsilon="0.0 * mole**-1 * kilocalorie" sigma="1.0 * angstrom"></Atom>
     </vdW>
-    <DoubleExponential version="0.3" scale14="0.5" cutoff="9.0 * angstrom" method="cutoff" switch_width="1.0 * angstrom" alpha="16.76632136164" beta="4.426755081718">
+    <DoubleExponential version="0.3" scale14="0.5" cutoff="9.0 * angstrom" periodic_method="cutoff" nonperiodic_method="no-cutoff" switch_width="1.0 * angstrom" alpha="16.76632136164" beta="4.426755081718">
         <Atom smirks="[#1:1]-[#6X4]" r_min="2.843520958931 * angstrom" epsilon="0.01911727710372 * mole**-1 * kilocalorie"></Atom>
         <Atom smirks="[#1:1]-[#6X4]-[#7,#8,#9,#16,#17,#35]" r_min="2.837840680719 * angstrom" epsilon="0.02294560035165 * mole**-1 * kilocalorie"></Atom>
         <Atom smirks="[#1:1]-[#6X3]" r_min="2.780924935117 * angstrom" epsilon="0.01933806046098 * mole**-1 * kilocalorie"></Atom>
