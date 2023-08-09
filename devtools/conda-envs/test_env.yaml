@@ -11,5 +11,8 @@ dependencies:
   - pytest
 
     # Core-deps
-  - openff-toolkit >=0.10.6, <0.11
-  - smirnoff-plugins
+  - openff-toolkit >=0.14.3
+  - openff-interchange>=0.3.11
+  # the above two constraints are pulled in by smirnoff-plugins;
+  # could just drop them, but maybe it's better to be explicit
+  - smirnoff-plugins >=2023.08.0
