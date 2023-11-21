@@ -21,6 +21,8 @@ The "unconstrained" version of each force field (i.e. de_unconstrained-1.0.0.off
 
 | Filename                              | DOI | FF line    | Release Date | Major format changes? | 
 |---------------------------------------|--|------------|--------------|-----------------------|
+| `de-force-1.0.1.offxml`               |
+| `de-force_unconstrained-1.0.1.offxml` |
 | `de-force-1.0.0.offxml`               | https://doi.org/10.26434/chemrxiv-2023-28r9s | DE-Force-1 | Feb 17, 2023 | No                    |
 | `de-force_unconstrained-1.0.0.offxml` | https://doi.org/10.26434/chemrxiv-2023-28r9s | DE-Force-1 | Feb 17, 2023 | No                    |
 
