@@ -52,6 +52,7 @@ def test_load_de_ff(forcefield):
 
 
 def test_openmm_energies_not_crazy():
+    # Could pick any ligand that's supported by both FFs
     molecule = Molecule.from_smiles("NC(=O)c1cccc2c1OCCO2")
     molecule.generate_conformers(n_conformers=1)
     topology = molecule.to_topology()
@@ -69,7 +70,10 @@ def test_openmm_energies_not_crazy():
         combine_nonbonded_forces=False,
     )
 
+    # Energies should differ a little bit, but be similar
     assert 0.1 < sage_energies["vdW"] / de_energies["vdW"] < 10
+
+    # Electrostatics methods are the same, so energies should be as well
     assert sage_energies["Electrostatics"].m == pytest.approx(
         de_energies["Electrostatics"].m
     )
@@ -84,4 +88,4 @@ def test_fails_unsupported_chemistry():
             load_plugins=True,
         ).create_interchange(
             Molecule.from_mapped_smiles("[H:3][C:1]#[C:2][H:4]").to_topology()
-        )
+        ).to_openmm(combine_nonbonded_forces=False)
