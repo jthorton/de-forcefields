@@ -19,20 +19,52 @@ Detailed usage examples can be found in the OpenFF Toolkit repository.
 Each force field is currently available in two forms -- both with and without bond constraints to hydrogen. The default version of each force field (i.e. de-1.0.0.offxml) is suitable for typical molecular dynamics simulations with constrained bonds to hydrogen. 
 The "unconstrained" version of each force field (i.e. de_unconstrained-1.0.0.offxml) should be used when single-point energies are a major concern (e.g. geometry optimizations) and when comparing the force field to QM data.
 
-| Filename                              | DOI  | FF line    | Release Date | Major format changes? |
-|---------------------------------------|------|------------|--------------|-----------------------|
-| `de-force-1.0.0.offxml`               | TODO | DE-Force-1 | Feb 17, 2023 | No                    |
-| `de-force_unconstrained-1.0.0.offxml` | TODO | DE-Force-1 | Feb 17, 2023 | No                    |
+| Filename                              | DOI | FF line    | Release Date | Major format changes? | 
+|---------------------------------------|--|------------|--------------|-----------------------|
+| `de-force-1.0.1.offxml`               |
+| `de-force_unconstrained-1.0.1.offxml` |
+| `de-force-1.0.0.offxml`               | https://doi.org/10.26434/chemrxiv-2023-28r9s | DE-Force-1 | Feb 17, 2023 | No                    |
+| `de-force_unconstrained-1.0.0.offxml` | https://doi.org/10.26434/chemrxiv-2023-28r9s | DE-Force-1 | Feb 17, 2023 | No                    |
 
 
-## Installation
+# Installation
+## Installation of virtual environment
+
+``de-forcefields`` packages are published via [conda-forge](https://conda-forge.org/) and are simple to install via the [conda](https://docs.conda.io/en/latest/) package manager.
+If you don't have the conda package manager installed already you can follow the [guide](https://conda.io/projects/conda/en/latest/user-guide/install/index.html#installation) provided by conda to get started.
+Before installing the package we recommend using a virtual environment to avoid dependency conflicts with other packages. You can then create a new environment and install `de-forcefields` via:
+
+```shell
+conda create -c conda-forge --name deforce de-forcefields
+```
+
+The environment must then be activated before the software can be used:
+
+```shell
+conda activate deforce
+```
+
+To deactivate the environment use:
+
+```shell
+conda deactivate
+```
+
+Finally, the environment can be removed via:
+
+```shell
+conda remove -n deforce --all
+```
+
+## Installing via conda
+
+The package can also be installed into an existing virtual environment via:
 
 ```shell
 conda install -c conda-forge de-forcefields
 ```
 
-
-## Use
+# Use
 
 Installing this package exposes an entry point that makes the `deforcefields/offxml/` directory easily accessible by other packages in the same Python installation. 
 If the [OpenFF Toolkit](https://github.com/openforcefield/openff-toolkit) is installed, it will automatically detect and use this entry point:
@@ -55,7 +87,7 @@ Otherwise, the entry point can be accessed by querying the `openforcefield.smirn
 
 Force fields in the `DE-Force-1` lines are descended from [OpenFF-2.0.0 Sage](https://doi.org/10.5281/zenodo.5214478).
 
-## General versioning guidelines
+# General versioning guidelines
 
 Force fields moving forward will be called `name-X.Y.Z`
 
@@ -64,5 +96,10 @@ Force fields moving forward will be called `name-X.Y.Z`
 * `Z` is a bugfix version -- e.g. something we've caught and corrected.
 
 
-## Versions
+# Versions
 - `DE-Force-1` : Proof of concept general transferable Double Exponential force field fit using [Sage training data](https://doi.org/10.26434/chemrxiv-2022-n2z1c-v2). 
+
+
+# Copyright
+
+Copyright (c) 2023 Josh Horton
