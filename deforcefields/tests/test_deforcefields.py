@@ -1,6 +1,7 @@
 """
 Test loading DE-Force fields via the plugin interface through the toolkit.
 """
+
 import numpy
 import openmm
 import pytest
@@ -121,9 +122,9 @@ def test_energy_no_sites(forcefield, ref_energy, ethanol_with_charges):
     assert found_energy == pytest.approx(ref_energy)
 
 
-def evaluate_water_energy_at_distances(
+def evaluate_water_energy_at_distance(
     force_field: ForceField,
-    distances: list[float],
+    distance: float,
 ) -> list[Quantity]:
     """
     Evaluate a water dimer at specified distances (in Angstrom).
@@ -138,42 +139,39 @@ def evaluate_water_energy_at_distances(
     topology = Topology.from_molecules([water, water])
     topology.box_vectors = unit.Quantity(numpy.eye(3) * 20, unit.nanometer)
 
-    energies = list()
+    topology.set_positions(
+        numpy.vstack(
+            [
+                water.conformers[0],
+                water.conformers[0]
+                + Quantity(
+                    numpy.array([distance, 0, 0]),
+                    "angstrom",
+                ),
+            ],
+        ),
+    )
 
-    for distance in distances:
-        topology.set_positions(
-            numpy.vstack(
-                [
-                    water.conformers[0],
-                    water.conformers[0] + Quantity(
-                        numpy.array([distance, 0, 0]),
-                        "angstrom",
-                    ),
-                ],
-            ),
-        )
+    return get_openmm_energies(
+        force_field.create_interchange(topology),
+        combine_nonbonded_forces=False,
+    ).total_energy
 
-        energies.append(
-            get_openmm_energies(
-                force_field.create_interchange(topology),
-                combine_nonbonded_forces=False,
-            ).total_energy
-        )
 
-    return energies
-
-def test_energy_sites():
+@pytest.mark.parametrize(
+    ("distance", "ref_energy"),
+    [(2, 1005.0846252441406), (3, 44.696786403656006), (4, 10.453390896320343)],
+)
+def test_energy_sites(distance, ref_energy):
     """
     Test calculating the energy for a system with two waters with virtual sites at set distances.
     """
 
     ff = ForceField("de-force-1.0.2.offxml", load_plugins=True)
 
-    found_energies = evaluate_water_energy_at_distances(
+    found_energy = evaluate_water_energy_at_distance(
         force_field=ff,
-        distances=[2, 3, 4],
+        distance=distance,
     )
-    ref_energies = [1005.0846252441406, 44.696786403656006, 10.453390896320343]
 
-    for found, ref in zip(found_energies, ref_energies):
-        assert found.m_as(kj_mol) == pytest.approx(ref, rel=1e-3)
+    assert found_energy.m_as(kj_mol) == pytest.approx(ref_energy, abs=0.01)
