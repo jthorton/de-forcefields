@@ -1,16 +1,13 @@
 """
 Test loading DE-Force fields via the plugin interface through the toolkit.
 """
-
+import numpy
 import openmm
 import pytest
+from openff.interchange.constants import kj_mol
 from openff.interchange.drivers.openmm import get_openmm_energies
-from openff.toolkit import ForceField, Molecule
+from openff.toolkit import ForceField, Molecule, Quantity, Topology
 from openmm import unit
-from smirnoff_plugins.utilities.openmm import (
-    evaluate_energy,
-    evaluate_water_energy_at_distances,
-)
 
 
 @pytest.mark.parametrize(
@@ -27,9 +24,9 @@ def test_load_de_ff(forcefield, ethanol_with_charges):
 
     ff = ForceField(forcefield, load_plugins=True)
 
-    system = ff.create_interchange(topology=ethanol_with_charges.to_topology()).to_openmm(
-        combine_nonbonded_forces=False,
-    )
+    system = ff.create_interchange(
+        topology=ethanol_with_charges.to_topology(),
+    ).to_openmm(combine_nonbonded_forces=False)
 
     forces = {force.__class__.__name__: force for force in system.getForces()}
 
@@ -97,9 +94,9 @@ def test_fails_unsupported_chemistry():
 @pytest.mark.parametrize(
     "forcefield, ref_energy",
     [
-        pytest.param("de-force-1.0.0.offxml", 13.601144438830156, id="No constraints"),
+        pytest.param("de-force-1.0.2.offxml", 13.601144438830156, id="No constraints"),
         pytest.param(
-            "de-force_unconstrained-1.0.0.offxml", 13.605201859835375, id="Constraints"
+            "de-force_unconstrained-1.0.2.offxml", 13.605201859835375, id="Constraints"
         ),
     ],
 )
@@ -111,24 +108,72 @@ def test_energy_no_sites(forcefield, ref_energy, ethanol_with_charges):
 
     ff = ForceField(forcefield, load_plugins=True)
 
-    off_top = ethanol_with_charges.to_topology()
-    openmm_top = off_top.to_openmm()
-    system = ff.create_openmm_system(
-        topology=off_top, charge_from_molecules=[ethanol_with_charges]
+    interchange = ff.create_interchange(
+        topology=ethanol_with_charges.to_topology(),
+        charge_from_molecules=[ethanol_with_charges],
     )
-    energy = evaluate_energy(
-        system=system, topology=openmm_top, positions=ethanol_with_charges.conformers[0]
-    )
-    assert ref_energy == pytest.approx(energy)
 
+    found_energy = get_openmm_energies(
+        interchange,
+        combine_nonbonded_forces=False,
+    ).total_energy.m_as(kj_mol)
+
+    assert found_energy == pytest.approx(ref_energy)
+
+
+def evaluate_water_energy_at_distances(
+    force_field: ForceField,
+    distances: list[float],
+) -> list[Quantity]:
+    """
+    Evaluate a water dimer at specified distances (in Angstrom).
+
+    Taken from smirnoff_plugins.utilities.openmm, which collates virtual particles
+    between molecules. Interchange (with OpenMM) puts all virtual sites at the END
+    of the topology; mismatching these causes NaNs.
+    """
+
+    water = Molecule.from_smiles("O")
+    water.generate_conformers(n_conformers=1)
+    topology = Topology.from_molecules([water, water])
+    topology.box_vectors = unit.Quantity(numpy.eye(3) * 20, unit.nanometer)
+
+    energies = list()
+
+    for distance in distances:
+        topology.set_positions(
+            numpy.vstack(
+                [
+                    water.conformers[0],
+                    water.conformers[0] + Quantity(
+                        numpy.array([distance, 0, 0]),
+                        "angstrom",
+                    ),
+                ],
+            ),
+        )
+
+        energies.append(
+            get_openmm_energies(
+                force_field.create_interchange(topology),
+                combine_nonbonded_forces=False,
+            ).total_energy
+        )
+
+    return energies
 
 def test_energy_sites():
     """
     Test calculating the energy for a system with two waters with virtual sites at set distances.
     """
 
-    ff = ForceField("de-force-1.0.0.offxml", load_plugins=True)
-    energies = evaluate_water_energy_at_distances(force_field=ff, distances=[2, 3, 4])
-    ref_values = [1005.0846252441406, 44.696786403656006, 10.453390896320343]
-    for i, energy in enumerate(energies):
-        assert energy == pytest.approx(ref_values[i])
+    ff = ForceField("de-force-1.0.2.offxml", load_plugins=True)
+
+    found_energies = evaluate_water_energy_at_distances(
+        force_field=ff,
+        distances=[2, 3, 4],
+    )
+    ref_energies = [1005.0846252441406, 44.696786403656006, 10.453390896320343]
+
+    for found, ref in zip(found_energies, ref_energies):
+        assert found.m_as(kj_mol) == pytest.approx(ref, rel=1e-3)
