@@ -9,13 +9,14 @@ from openff.interchange.constants import kj_mol
 from openff.interchange.drivers.openmm import get_openmm_energies
 from openff.toolkit import ForceField, Molecule, Quantity, Topology
 from openmm import unit
+from smirnoff_plugins.utilities.openmm import evaluate_water_energy_at_distances
 
 
 @pytest.mark.parametrize(
     "forcefield",
     [
-        pytest.param("de-force-1.0.2.offxml", id="No constraints"),
-        pytest.param("de-force_unconstrained-1.0.2.offxml", id="Constraints"),
+        pytest.param("de-force-1.0.3.offxml", id="No constraints"),
+        pytest.param("de-force_unconstrained-1.0.3.offxml", id="Constraints"),
     ],
 )
 def test_load_de_ff(forcefield, ethanol_with_charges):
@@ -65,7 +66,7 @@ def test_openmm_energies_not_crazy():
 
     de_energies = get_openmm_energies(
         ForceField(
-            "de-force-1.0.2.offxml",
+            "de-force-1.0.3.offxml",
             load_plugins=True,
         ).create_interchange(topology),
         combine_nonbonded_forces=False,
@@ -85,7 +86,7 @@ def test_fails_unsupported_chemistry():
     # so this should error instead of assigning blank/bogus parameters
     with pytest.raises(KeyError, match="atom indices .*2"):
         ForceField(
-            "de-force-1.0.2.offxml",
+            "de-force-1.0.3.offxml",
             load_plugins=True,
         ).create_interchange(
             Molecule.from_mapped_smiles("[H:3][C:1]#[C:2][H:4]").to_topology()
@@ -95,9 +96,9 @@ def test_fails_unsupported_chemistry():
 @pytest.mark.parametrize(
     "forcefield, ref_energy",
     [
-        pytest.param("de-force-1.0.2.offxml", 13.601144438830156, id="No constraints"),
+        pytest.param("de-force-1.0.3.offxml", 13.601144438830156, id="No constraints"),
         pytest.param(
-            "de-force_unconstrained-1.0.2.offxml", 13.605201859835375, id="Constraints"
+            "de-force_unconstrained-1.0.3.offxml", 13.605201859835375, id="Constraints"
         ),
     ],
 )
@@ -160,18 +161,19 @@ def evaluate_water_energy_at_distance(
 
 @pytest.mark.parametrize(
     ("distance", "ref_energy"),
-    [(2, 1005.0846252441406), (3, 44.696786403656006), (4, 10.453390896320343)],
+    # calculated using openmm-8.1.1 August-2024
+    [(2, 728.2671203613281), (3, 35.038278102874756), (4, 9.129629909992218)],
 )
 def test_energy_sites(distance, ref_energy):
     """
     Test calculating the energy for a system with two waters with virtual sites at set distances.
     """
+    ff = ForceField("de-force-1.0.3.offxml", load_plugins=True, allow_cosmetic_attributes=True)
 
-    ff = ForceField("de-force-1.0.2.offxml", load_plugins=True)
-
-    found_energy = evaluate_water_energy_at_distance(
+    energy = evaluate_water_energy_at_distances(
         force_field=ff,
-        distance=distance,
-    )
+        distances=[distance],
+    )[0]
 
-    assert found_energy.m_as(kj_mol) == pytest.approx(ref_energy, abs=0.01)
+    assert energy == pytest.approx(ref_energy, abs=0.01)
+
