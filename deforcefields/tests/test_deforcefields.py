@@ -161,8 +161,8 @@ def evaluate_water_energy_at_distance(
 
 @pytest.mark.parametrize(
     ("distance", "ref_energy"),
-    # calculated using openmm-8.1.1 August-2024
-    [(2, 728.2671203613281), (3, 35.038278102874756), (4, 9.129629909992218)],
+    # calculated using openmm-8.1.2 August-2024
+    [(2, 1005.0847473144531), (3, 44.696786403656006), (4, 10.453390896320343)],
 )
 def test_energy_sites(distance, ref_energy):
     """
