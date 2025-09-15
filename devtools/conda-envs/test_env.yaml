@@ -12,7 +12,7 @@ dependencies:
 
     # Core-deps
   - openff-toolkit >=0.16
-  - openff-interchange >=0.3.25
+  - openff-interchange >=0.4.6
   # the above two constraints are pulled in by smirnoff-plugins;
   # could just drop them, but maybe it's better to be explicit
-  - smirnoff-plugins >=2024.07.0
+  - smirnoff-plugins >=2025.09.0
