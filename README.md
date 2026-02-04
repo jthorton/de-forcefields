@@ -21,8 +21,8 @@ The "unconstrained" version of each force field (i.e. de_unconstrained-1.0.3.off
 
 | Filename                              | DOI | FF line    | Release Date | Notes | 
 |---------------------------------------|--|------------|--------------|-----------------------|
-| `de-force-1.0.3.offxml`               |  | DE-Force-1 | Feb 17, 2023 | Provides new force fields that use the plugin v-site handlers from smirnoff-plugins allowing v-sites to have vdW parameters and charges.                    |
-| `de-force_unconstrained-1.0.3.offxml` |  | DE-Force-1 | Feb 17, 2023 | See above.                    |
+| `de-force-1.0.3.offxml`               |  | DE-Force-1 | Aug 6, 2024 | Provides new force fields that use the plugin v-site handlers from smirnoff-plugins allowing v-sites to have vdW parameters and charges.                    |
+| `de-force_unconstrained-1.0.3.offxml` |  | DE-Force-1 | Aug 6, 2024 | See above.                    |
 | `de-force-1.0.1.offxml`               |  | DE-Force-1 | May 1, 2024 | Updates to work with the newest version of interchange which removes the need for a classic LJ vdW section when using plugins.                  |
 | `de-force_unconstrained-1.0.1.offxml` |  | DE-Force-1 | May 1, 2024 | See above.
 | `de-force-1.0.0.offxml`               | https://doi.org/10.26434/chemrxiv-2023-28r9s | DE-Force-1 | Feb 17, 2023 | Initial release                    |
